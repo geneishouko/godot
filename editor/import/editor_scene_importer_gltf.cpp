@@ -184,7 +184,10 @@ String EditorSceneImporterGLTF::_gen_unique_name(GLTFState &state, const String 
 	return name;
 }
 
-String EditorSceneImporterGLTF::_sanitize_bone_name(const String &name) {
+String EditorSceneImporterGLTF::_sanitize_bone_name(GLTFState &state, const String &name) {
+	if (state.import_flags & EditorSceneImporter::IMPORT_VERBATIM_NAMES)
+		return name;
+
 	String p_name = name.camelcase_to_underscore(true);
 
 	RegEx pattern_nocolon(":");
@@ -206,11 +209,11 @@ String EditorSceneImporterGLTF::_sanitize_bone_name(const String &name) {
 }
 
 String EditorSceneImporterGLTF::_gen_unique_bone_name(GLTFState &state, const GLTFSkeletonIndex skel_i, const String &p_name) {
-
-	String s_name = _sanitize_bone_name(p_name);
+	String s_name = _sanitize_bone_name(state, p_name);
 	if (s_name.empty()) {
 		s_name = "bone";
 	}
+
 	String name;
 	int index = 1;
 	while (true) {
